@@ -31,44 +31,56 @@ namespace CourseManager
         private void InitializeComponent()
         {
             this.Text = "Добавить модуль";
-            this.Width = 300;
-            this.Height = 150;
+            this.Width = 350;
+            this.Height = 180;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
             var nameLabel = new Label
             {
-                Text = "Имя модуля:",
-                Location = new System.Drawing.Point(10, 10),
+                Text = "Название модуля:",
+                Location = new System.Drawing.Point(10, 20),
                 AutoSize = true
             };
+
             var nameTextBox = new TextBox
             {
-                Location = new System.Drawing.Point(10, 30),
-                Size = new System.Drawing.Size(200, 20)
+                Location = new System.Drawing.Point(10, 45),
+                Width = 300
             };
+
             var okButton = new Button
             {
                 Text = "ОК",
-                Location = new System.Drawing.Point(10, 60),
-                Size = new System.Drawing.Size(75, 23)
+                Location = new System.Drawing.Point(10, 90),
+                Size = new System.Drawing.Size(100, 30)
             };
+
             var cancelButton = new Button
             {
                 Text = "Отмена",
-                Location = new System.Drawing.Point(85, 60),
-                Size = new System.Drawing.Size(75, 23)
+                Location = new System.Drawing.Point(120, 90),
+                Size = new System.Drawing.Size(100, 30)
             };
-            okButton.Click += (sender, e) =>
+
+            okButton.Click += (s, e) =>
             {
-                Name = nameTextBox.Text;
+                if (string.IsNullOrWhiteSpace(nameTextBox.Text))
+                {
+                    MessageBox.Show("Введите название модуля!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                ModuleName = nameTextBox.Text;
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             };
-            cancelButton.Click += (sender, e) =>
+
+            cancelButton.Click += (s, e) =>
             {
                 this.DialogResult = DialogResult.Cancel;
                 this.Close();
             };
-            this.Controls.AddRange(new Control[] { nameLabel, nameTextBox, okButton,
-cancelButton });
+
+            this.Controls.AddRange(new Control[] { nameLabel, nameTextBox, okButton, cancelButton });
         }
 
         #endregion

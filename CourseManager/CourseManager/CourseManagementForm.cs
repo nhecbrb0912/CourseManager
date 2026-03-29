@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using System.Text.Json;
 
 namespace CourseManager
 {
@@ -14,123 +10,91 @@ namespace CourseManager
     {
         private List<Course> courses = new List<Course>();
         private ListView listView;
-        private Button createCourseButton;
-        private Button addModuleButton;
-        private Button removeModuleButton;
-        private Button updateProgressButton;
+        private const string SaveFilePath = "courses.json";
+
         public CourseManagementForm()
         {
-            this.Text = "Управление курсами";
-            this.Width = 500;
-            this.Height = 400;
-            CreateControls();
+            InitializeComponent();
+            LoadCourses();
         }
-        private void CreateControls()
+
+
+
+        private void CreateCourseBtn_Click(object sender, EventArgs e)
         {
-            listView = new ListView
+            var form = new CreateCourseForm();
+            if (form.ShowDialog() == DialogResult.OK)
             {
-                Location = new System.Drawing.Point(10, 10),
-                Size = new System.Drawing.Size(480, 300),
-                View = View.Details,
-                FullRowSelect = true
-            };
-            listView.Columns.Add("Название", 150);
-            listView.Columns.Add("Описание", 330);
-            createCourseButton = new Button
-            {
-                Location = new System.Drawing.Point(10, 320),
-                Text = "Создать курс",
-                Size = new System.Drawing.Size(100, 25)
-            };
-            createCourseButton.Click += (sender, e) =>
-            {
-                var createCourseForm = new CreateCourseForm();
-                createCourseForm.ShowDialog();
-                if (createCourseForm.DialogResult == DialogResult.OK)
-                {
-                    var course = new Course(
-                    createCourseForm.Name,
-                    createCourseForm.Description,
-                    createCourseForm.StartTime,
-                    createCourseForm.EndTime);
-                    courses.Add(course);
-                    UpdateCourseList();
-                }
-            };
-            addModuleButton = new Button
-            {
-                Location = new System.Drawing.Point(120, 320),
-                Text = "Добавить модуль",
-                Size = new System.Drawing.Size(100, 25)
-            };
-            addModuleButton.Click += (sender, e) =>
-            {
-                if (listView.SelectedItems.Count == 0)
-                {
-                    MessageBox.Show("Сначала выберите курс.");
-                    return;
-                }
-                var course = courses[listView.SelectedItems[0].Index];
-                var addModuleForm = new AddModuleForm();
-                addModuleForm.ShowDialog();
-                if (addModuleForm.DialogResult == DialogResult.OK)
-                {
-                    course.AddModule(new Module(addModuleForm.Name));
-                }
-            };
-            removeModuleButton = new Button
-            {
-                Location = new System.Drawing.Point(230, 320),
-                Text = "Удалить модуль",
-                Size = new System.Drawing.Size(100, 25)
-            };
-            removeModuleButton.Click += (sender, e) =>
-            {
-                if (listView.SelectedItems.Count == 0)
-                {
-                    MessageBox.Show("Сначала выберите курс.");
-                    return;
-                }
-                var course = courses[listView.SelectedItems[0].Index];
-                var removeModuleForm = new RemoveModuleForm(course.Modules);
-                removeModuleForm.ShowDialog();
-                if (removeModuleForm.DialogResult == DialogResult.OK)
-                {
-                    course.RemoveModule(removeModuleForm.Module);
-                }
-            };
-            updateProgressButton = new Button
-            {
-                Location = new System.Drawing.Point(340, 320),
-                Text = "Обновить прогресс",
-                Size = new System.Drawing.Size(120, 25)
-            };
-            updateProgressButton.Click += (sender, e) =>
-            {
-                if (listView.SelectedItems.Count == 0)
-                {
-                    MessageBox.Show("Сначала выберите курс.");
-                    return;
-                }
-                var course = courses[listView.SelectedItems[0].Index];
-                if (course.Modules.Count == 0)
-                {
-                    MessageBox.Show("У курса нет модулей.");
-                    return;
-                }
-                var updateProgressForm = new UpdateProgressForm();
-                updateProgressForm.ShowDialog();
-                if (updateProgressForm.DialogResult == DialogResult.OK)
-                {
-                    course.Modules[0].UpdateProgress(updateProgressForm.Progress);
-                }
-            };
-            this.Controls.Add(listView);
-            this.Controls.Add(createCourseButton);
-            this.Controls.Add(addModuleButton);
-            this.Controls.Add(removeModuleButton);
-            this.Controls.Add(updateProgressButton);
+                var course = new Course(form.CourseName, form.Description, form.StartTime, form.EndTime);
+                courses.Add(course);
+                UpdateCourseList();
+                SaveCourses();
+            }
         }
+
+        private void AddModuleBtn_Click(object sender, EventArgs e)
+        {
+            if (listView.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Сначала выберите курс.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int selectedIndex = listView.SelectedItems[0].Index;
+            var form = new AddModuleForm();
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                if (listView.SelectedItems.Count == 0 || listView.SelectedItems[0].Index != selectedIndex)
+                {
+                    MessageBox.Show("Курс не выбран. Выберите курс повторно.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var course = courses[listView.SelectedItems[0].Index];
+                course.AddModule(new Module(form.ModuleName));
+                UpdateCourseList();
+                SaveCourses();
+            }
+        }
+
+        private void RemoveModuleBtn_Click(object sender, EventArgs e)
+        {
+            if (listView.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Сначала выберите курс.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var course = courses[listView.SelectedItems[0].Index];
+            if (course.Modules.Count == 0)
+            {
+                MessageBox.Show("У курса нет модулей.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var form = new RemoveModuleForm(course.Modules);
+            if (form.ShowDialog() == DialogResult.OK && form.Module != null)
+            {
+                course.RemoveModule(form.Module);
+                UpdateCourseList();
+                SaveCourses();
+            }
+        }
+
+        private void ViewInfoBtn_Click(object sender, EventArgs e)
+        {
+            if (listView.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Сначала выберите курс.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var course = courses[listView.SelectedItems[0].Index];
+            var infoForm = new CourseInfoForm();
+            infoForm.SetCourse(course);
+            infoForm.ShowDialog();
+        }
+
         private void UpdateCourseList()
         {
             listView.Items.Clear();
@@ -138,6 +102,44 @@ namespace CourseManager
             {
                 listView.Items.Add(new ListViewItem(new[] { course.Name, course.Description }));
             }
+        }
+
+        private void SaveCourses()
+        {
+            try
+            {
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                var json = JsonSerializer.Serialize(courses, options);
+                File.WriteAllText(SaveFilePath, json);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка сохранения: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LoadCourses()
+        {
+            try
+            {
+                if (File.Exists(SaveFilePath))
+                {
+                    var json = File.ReadAllText(SaveFilePath);
+                    courses = JsonSerializer.Deserialize<List<Course>>(json) ?? new List<Course>();
+                    UpdateCourseList();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                courses = new List<Course>();
+            }
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            SaveCourses();
+            base.OnFormClosing(e);
         }
     }
 }

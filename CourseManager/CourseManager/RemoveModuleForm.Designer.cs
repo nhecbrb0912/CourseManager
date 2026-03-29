@@ -32,43 +32,44 @@ namespace CourseManager
         {
             this.Text = "Удалить модуль";
             this.Width = 300;
-            this.Height = 200;
-            var moduleListBox = new ListBox
+            this.Height = 250;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            var moduleListBox = new ListBox { Location = new System.Drawing.Point(10, 10), Size = new System.Drawing.Size(260, 150) };
+            foreach (var module in modules)
             {
-                Location = new System.Drawing.Point(10, 10),
-                Size = new System.Drawing.Size(200, 100)
-            };
-            moduleListBox.DataSource = modules;
-            var removeButton = new Button
-            {
-                Text = "Удалить",
-                Location = new System.Drawing.Point(10, 120),
-                Size = new System.Drawing.Size(75, 23)
-            };
-            var cancelButton = new Button
-            {
-                Text = "Отмена",
-                Location = new System.Drawing.Point(85, 120),
-                Size = new System.Drawing.Size(75, 23)
-            };
-            removeButton.Click += (sender, e) =>
+                moduleListBox.Items.Add(module);
+            }
+
+            var removeButton = new Button { Text = "Удалить", Location = new System.Drawing.Point(10, 170), Size = new System.Drawing.Size(100, 30) };
+            var cancelButton = new Button { Text = "Отмена", Location = new System.Drawing.Point(120, 170), Size = new System.Drawing.Size(100, 30) };
+
+            removeButton.Click += (s, e) =>
             {
                 if (moduleListBox.SelectedItem != null)
                 {
                     Module = (Module)moduleListBox.SelectedItem;
                     this.DialogResult = DialogResult.OK;
+                    MessageBox.Show(
+                    $"Удален модуль '{Module}'.",
+                    "Успех",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
                     this.Close();
                 }
                 else
                 {
-                    MessageBox.Show("Выберите модуль для удаления.");
+                    MessageBox.Show("Выберите модуль для удаления.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             };
-            cancelButton.Click += (sender, e) =>
+
+            cancelButton.Click += (s, e) =>
             {
                 this.DialogResult = DialogResult.Cancel;
                 this.Close();
             };
+
             this.Controls.AddRange(new Control[] { moduleListBox, removeButton, cancelButton });
         }
 

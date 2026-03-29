@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace CourseManager
 {
-    
     public class Course
     {
         public string Name { get; set; }
@@ -18,27 +13,29 @@ namespace CourseManager
 
         public Course(string name, string description, DateTime startTime, DateTime endTime)
         {
-            Name = name; Description = description;
+            Name = name;
+            Description = description;
             Modules = new List<Module>();
-            StartTime = startTime; EndTime = endTime;
+            StartTime = startTime;
+            EndTime = endTime;
         }
 
         public void AddModule(Module module)
         {
             Modules.Add(module);
-            MessageBox.Show($"Модуль '{module.Name}' добавлен к курсу '{Name}'.");
         }
 
         public void RemoveModule(Module module)
         {
-            if (Modules.Contains(module)) { Modules.Remove(module); MessageBox.Show("Модуль удалён."); }
-            else { MessageBox.Show("Модуль не найден."); }
+            if (Modules.Contains(module))
+            {
+                Modules.Remove(module);
+            }
         }
 
-        public void DisplayCourseInfo()
+        public override string ToString()
         {
-            var form = new CourseInfoForm(); form.Course = this; form.ShowDialog();
+            return Name;
         }
     }
-
 }

@@ -31,35 +31,33 @@ namespace CourseManager
         private void InitializeComponent()
         {
             this.Text = "Информация о курсе";
-            this.Width = 400;
-            this.Height = 300;
-            var nameLabel = new Label
+            this.Width = 500;
+            this.Height = 450;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            var nameLabel = new Label { Text = "Название: ", Location = new System.Drawing.Point(10, 10), AutoSize = true, Name = "nameLabel" };
+            var descriptionLabel = new Label { Text = "Описание: ", Location = new System.Drawing.Point(10, 30), AutoSize = true, MaximumSize = new System.Drawing.Size(460, 0), Name = "descriptionLabel" };
+            var startTimeLabel = new Label { Text = "Дата начала: ", Location = new System.Drawing.Point(10, 50), AutoSize = true, Name = "startTimeLabel" };
+            var endTimeLabel = new Label { Text = "Дата окончания: ", Location = new System.Drawing.Point(10, 70), AutoSize = true, Name = "endTimeLabel" };
+            var modulesCountLabel = new Label { Text = "Модулей: 0", Location = new System.Drawing.Point(10, 90), AutoSize = true, Name = "modulesCountLabel" };
+
+            modulesListBox = new ListBox
             {
-                Text = $"Название: {course.Name}",
-                Location = new System.Drawing.Point(10, 10),
-                AutoSize = true
+                Location = new System.Drawing.Point(10, 110),
+                Size = new System.Drawing.Size(460, 150),
+                Name = "modulesListBox"
             };
-            var descriptionLabel = new Label
-            {
-                Text = $"Описание: {course.Description}",
-                Location = new System.Drawing.Point(10, 30),
-                AutoSize = true,
-                MaximumSize = new System.Drawing.Size(380, 0)
-            };
-            var startTimeLabel = new Label
-            {
-                Text = $"Дата начала: {course.StartTime.ToShortDateString()}",
-                Location = new System.Drawing.Point(10, 50),
-                AutoSize = true
-            };
-            var endTimeLabel = new Label
-            {
-                Text = $"Дата окончания: {course.EndTime.ToShortDateString()}",
-                Location = new System.Drawing.Point(10, 70),
-                AutoSize = true
-            };
-            this.Controls.AddRange(new Control[] { nameLabel, descriptionLabel, startTimeLabel,
-endTimeLabel });
+
+            var viewModuleInfoBtn = new Button { Text = "Просмотр информации о модуле", Location = new System.Drawing.Point(10, 270), Size = new System.Drawing.Size(230, 30), Name = "viewModuleInfoBtn" };
+            viewModuleInfoBtn.Click += ViewModuleInfoBtn_Click;
+
+            var closeButton = new Button { Text = "Закрыть", Location = new System.Drawing.Point(250, 270), Size = new System.Drawing.Size(100, 30) };
+            closeButton.Click += (s, e) => this.Close();
+
+            this.Controls.AddRange(new Control[] {
+                nameLabel, descriptionLabel, startTimeLabel, endTimeLabel,
+                modulesCountLabel, modulesListBox, viewModuleInfoBtn, closeButton
+            });
         }
 
         #endregion
