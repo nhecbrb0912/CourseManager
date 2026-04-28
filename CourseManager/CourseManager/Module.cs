@@ -29,6 +29,26 @@ namespace CourseManager
             }
         }
 
+        public bool UpdateProgress(decimal newProgress)
+        {
+            if (newProgress < 0 || newProgress > 100)
+            {
+                return false;
+            }
+            Progress = newProgress;
+            return true;
+        }
+
+        public bool IsCompleted()
+        {
+            return Progress >= 100;
+        }
+
+        public int GetCompletedTopicsCount()
+        {
+            return IsCompleted() ? (Topics?.Count ?? 0) : 0;
+        }
+
         public override string ToString()
         {
             return Name;

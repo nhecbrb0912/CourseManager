@@ -31,31 +31,69 @@ namespace CourseManager
         private void InitializeComponent()
         {
             this.Text = "Управление курсами";
-            this.Width = 800;
+            this.Width = 950;  // ✅ Увеличил ширину для всех кнопок
             this.Height = 600;
             this.StartPosition = FormStartPosition.CenterScreen;
 
             listView = new ListView
             {
                 Location = new System.Drawing.Point(10, 10),
-                Size = new System.Drawing.Size(760, 450),
+                Size = new System.Drawing.Size(910, 450),
                 View = View.Details,
                 FullRowSelect = true
             };
             listView.Columns.Add("Название", 200);
-            listView.Columns.Add("Описание", 550);
+            listView.Columns.Add("Описание", 700);
 
-            var createCourseBtn = new Button { Text = "Создать курс", Location = new System.Drawing.Point(10, 470), Size = new System.Drawing.Size(120, 30) };
-            var addModuleBtn = new Button { Text = "Добавить модуль", Location = new System.Drawing.Point(140, 470), Size = new System.Drawing.Size(120, 30) };
-            var removeModuleBtn = new Button { Text = "Удалить модуль", Location = new System.Drawing.Point(270, 470), Size = new System.Drawing.Size(120, 30) };
-            var viewInfoBtn = new Button { Text = "Просмотр информации", Location = new System.Drawing.Point(400, 470), Size = new System.Drawing.Size(180, 30) };
+            var createCourseBtn = new Button
+            {
+                Text = "Создать курс",
+                Location = new System.Drawing.Point(10, 470),
+                Size = new System.Drawing.Size(120, 30)
+            };
 
+            var addModuleBtn = new Button
+            {
+                Text = "Добавить модуль",
+                Location = new System.Drawing.Point(140, 470),
+                Size = new System.Drawing.Size(120, 30)
+            };
+
+            var removeModuleBtn = new Button
+            {
+                Text = "Удалить модуль",
+                Location = new System.Drawing.Point(270, 470),
+                Size = new System.Drawing.Size(120, 30)
+            };
+
+            var viewInfoBtn = new Button
+            {
+                Text = "Просмотр информации",
+                Location = new System.Drawing.Point(400, 470),
+                Size = new System.Drawing.Size(140, 30)
+            };
+
+            var statisticsBtn = new Button
+            {
+                Text = "Статистика",
+                Location = new System.Drawing.Point(550, 470),
+                Size = new System.Drawing.Size(120, 30),
+                Font = new System.Drawing.Font("Segoe UI", 9)
+            };
+
+
+
+            // Обработчики событий
             createCourseBtn.Click += CreateCourseBtn_Click;
             addModuleBtn.Click += AddModuleBtn_Click;
             removeModuleBtn.Click += RemoveModuleBtn_Click;
             viewInfoBtn.Click += ViewInfoBtn_Click;
+            statisticsBtn.Click += StatisticsBtn_Click;
 
-            this.Controls.AddRange(new Control[] { listView, createCourseBtn, addModuleBtn, removeModuleBtn, viewInfoBtn });
+            this.Controls.AddRange(new Control[] {
+                listView, createCourseBtn, addModuleBtn, removeModuleBtn,
+                 viewInfoBtn, statisticsBtn
+            });
         }
 
         #endregion

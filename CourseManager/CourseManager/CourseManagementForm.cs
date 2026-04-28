@@ -81,6 +81,35 @@ namespace CourseManager
             }
         }
 
+        // ✅ ОБРАБОТЧИК ДЛЯ КНОПКИ ОБНОВЛЕНИЯ ПРОГРЕССА
+        private void UpdateProgressBtn_Click(object sender, EventArgs e)
+        {
+            if (listView.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Сначала выберите курс.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var course = courses[listView.SelectedItems[0].Index];
+            if (course.Modules.Count == 0)
+            {
+                MessageBox.Show("У курса нет модулей.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            MessageBox.Show(
+                "💡 Совет: Для обновления прогресса откройте информацию о курсе → выберите модуль → нажмите \"Просмотр информации о модуле\" → обновите прогресс там.",
+                "Информация",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
+
+            // Открываем информацию о курсе для удобства
+            var infoForm = new CourseInfoForm();
+            infoForm.SetCourse(course);
+            infoForm.ShowDialog();
+        }
+
         private void ViewInfoBtn_Click(object sender, EventArgs e)
         {
             if (listView.SelectedItems.Count == 0)
@@ -93,6 +122,19 @@ namespace CourseManager
             var infoForm = new CourseInfoForm();
             infoForm.SetCourse(course);
             infoForm.ShowDialog();
+        }
+
+        private void StatisticsBtn_Click(object sender, EventArgs e)
+        {
+            if (listView.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Сначала выберите курс для просмотра статистики.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var course = courses[listView.SelectedItems[0].Index];
+            var statsForm = new StatisticsForm(course);
+            statsForm.ShowDialog();
         }
 
         private void UpdateCourseList()
